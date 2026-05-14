@@ -1,0 +1,46 @@
+# Compiled output
+*.pyc
+__pycache__/
+
+# Node
+node_modules/
+
+# Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large assets
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+
+# Python virtual environments
+venv/
+env/
+
+# Wrangler secrets
+.env
+.env.*
+
+# Test outputs
+output/
+literary-empire-contracts/test/
+
+# Double directories
+wenji-platform/
+*.html.bak
+*.map
