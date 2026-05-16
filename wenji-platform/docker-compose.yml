@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: wenji-db
+    environment:
+      POSTGRES_USER: wenji
+      POSTGRES_PASSWORD: wenji123
+      POSTGRES_DB: wenji_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 可选：本地支付模拟回调服务
+  # 如需真实支付，需配置内网穿透（ngrok）接收微信/支付宝回调
+
+volumes:
+  postgres_data:

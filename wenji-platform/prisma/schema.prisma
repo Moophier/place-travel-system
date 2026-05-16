@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("READER")
+  accounts      Account[]
+  sessions      Session[]
+  creator       Creator?
+  supplier      Supplier?
+  cards         Card[]
+  cardOrders    CardOrder[]
+  subscriptions Subscription[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Creator {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  penName               String?
+  bio                   String?
+  approved              Boolean  @default(false)
+  subscriptionActive    Boolean  @default(false)
+  subscriptionExpiresAt DateTime?
+  totalEarnings         Float    @default(0)
+  createdAt             DateTime @default(now())
+}
+
+model Supplier {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName String
+  contact     String?
+  address     String?
+  category    String?
+  verified    Boolean @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Card {
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String?
+  bookAuthor  String
+  bookTitle   String?
+  quote       String?
+  content     String
+  price       Float    @default(18)
+  currency    String   @default("CNY")
+  status      String   @default("DRAFT")
+  featured    Boolean  @default(false)
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id])
+  locations   Location[]
+  tags        Tag[]
+  orders      CardOrder[]
+  score       Int      @default(0)
+  salesCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Location {
+  id          String  @id @default(cuid())
+  name        String
+  lat         Float?
+  lng         Float?
+  description String?
+  cardId      String
+  card        Card    @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String @unique
+  cards Card[]
+}
+
+model CardOrder {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id])
+  amount    Float
+  status    String   @default("PENDING")
+  paymentId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, cardId])
+}
+
+model Subscription {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  type      String    @default("DESIGN_MD")
+  status    String    @default("ACTIVE")
+  amount    Float
+  expiresAt DateTime
+  paymentId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expiresAt  DateTime
+
+  @@unique([identifier, token])
+}
