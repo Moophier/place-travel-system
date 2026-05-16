@@ -9,8 +9,12 @@
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "cf:build": "npx @cloudflare/next-on-pages@1",
+    "cf:dev": "npx wrangler pages dev .vercel/output/static --compatibility-flags=nodejs_compat",
+    "cf:deploy": "npm run build && npx wrangler pages deploy .vercel/output/static"
   },
   "dependencies": {
     "@prisma/client": "^5.12.0",
@@ -31,6 +35,7 @@
     "@types/react-dom": "^18.2.0",
     "prisma": "^5.12.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "wrangler": "^3.50.0"
   }
 }

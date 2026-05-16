@@ -1,29 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Cloudflare Pages 需要关闭图片优化
   images: {
-    domains: [],
+    unoptimized: true,
   },
-  // Disable SWC due to binary incompatibility in MSYS2/MinGW environment
-  experimental: {
-    forceSwcTransforms: false,
-  },
-  webpack: (config, { isServer }) => {
-    // Remove all SWC loaders to force Babel fallback
-    const swcLoaderNames = ['swc-loader', '@swc/loader', 'next-swc-loader']
-    config.module.rules = config.module.rules.map((rule) => {
-      if (rule.loader && swcLoaderNames.some((n) => rule.loader.includes(n))) {
-        return { test: rule.test, use: [] }
-      }
-      if (rule.use && Array.isArray(rule.use)) {
-        rule.use = rule.use.filter(
-          (u) => !swcLoaderNames.some((n) => (u.loader || '').includes(n))
-        )
-      }
-      return rule
-    })
-    return config
-  },
+  // 启用 Cloudflare Pages 适配
+  trailingSlash: false,
+  // 静态导出配置（Cloudflare Pages 会自动处理）
+  output: 'standalone',
 }
 
 module.exports = nextConfig

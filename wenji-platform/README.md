@@ -130,6 +130,52 @@ wenji-platform/
 └── package.json
 ```
 
+---
+
+## ☁️ Cloudflare Pages 部署
+
+### 方式一：GitHub Actions 自动部署（推荐）
+
+1. **在 Cloudflare Dashboard 创建 API Token**
+   - 进入 https://dash.cloudflare.com/profile/api-tokens
+   - 创建 Token，权限：`Pages:Edit` + `Account:Read`
+   - 记录 Token
+
+2. **在 GitHub 仓库添加 Secrets**
+   - 进入仓库 Settings → Secrets → Actions
+   - 添加 `CLOUDFLARE_API_TOKEN`
+   - 添加 `CLOUDFLARE_ACCOUNT_ID`（在 Cloudflare URL 中找）
+
+3. **推送代码到 master 分支**
+   - 自动触发 GitHub Actions 构建部署
+
+### 方式二：手动部署
+
+```bash
+# 安装 wrangler
+npm install -g wrangler
+
+# 登录
+wrangler login
+
+# 构建
+npm run build
+
+# 部署
+npm run cf:deploy
+```
+
+### D1 数据库（如需）
+
+```bash
+# 创建 D1 数据库
+wrangler d1 create wenji-db
+
+# 在 wrangler.toml 中填入 database_id
+```
+
+---
+
 ## 下一步（05-10）
 
 - [ ] 卡片详情页（独立路由 /card/[id]）
