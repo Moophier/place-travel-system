@@ -28,6 +28,10 @@ jobs:
         working-directory: ./wenji-platform
         run: npm ci
 
+      - name: Install Wrangler
+        working-directory: ./wenji-platform
+        run: npm install wrangler --save-dev
+
       - name: Generate Prisma Client
         working-directory: ./wenji-platform
         run: npx prisma generate
@@ -35,19 +39,16 @@ jobs:
       - name: Build Next.js
         working-directory: ./wenji-platform
         run: npm run build
+        env:
+          NODE_ENV: production
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          project-name: wenji-platform
-          directory: wenji-platform/.vercel/output/static
-          # 可选: 如果使用 D1 数据库
-          # -d1-databases: DB=wenji-db
+        working-directory: ./wenji-platform
+        run: npx wrangler pages deploy .next --project-name=wenji-platform --commit-message="${{ github.event.head_commit.message || 'Deploy from GitHub Actions' }}"
         env:
-          NODE_OPTIONS: '--inspect'
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Cloudflare Pages URL
+      - name: Deployment URL
         if: github.event_name == 'push'
-        run: echo "Deployment URL: https://wenji-platform.pages.dev"
+        run: echo "🎉 Deployed to: https://wenji-platform.pages.dev"
