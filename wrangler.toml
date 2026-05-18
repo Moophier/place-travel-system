@@ -1,4 +1,4 @@
-name = "wenji-pages"
+name = "literary-footprints-api"
 main = "assets/worker.js"
 compatibility_date = "2024-12-01"
 
